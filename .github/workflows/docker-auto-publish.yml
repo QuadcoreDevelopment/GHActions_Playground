@@ -1,12 +1,12 @@
-name: Autonmatically create and publish a Docker image of the frontend to GHCR on release
+name: Automatically create and publish a Docker image to GHCR on release tag
 
 on:
   push:
     tags:
       - frontend_v*.*.*
+      - backend_v*.*.*
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "${{ github.repository }}_frontend"
 
 jobs:
   build-and-push-image:
@@ -21,6 +21,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Extract service name from tag
+        id: extract
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          if [[ "$TAG" =~ ^(frontend|backend)_v[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
+            SERVICE="${BASH_REMATCH[1]}"
+            echo "SERVICE=$SERVICE" >> $GITHUB_ENV
+            echo "IMAGE_NAME=${{ github.repository }}_${SERVICE}" >> $GITHUB_ENV
+            echo "CONTEXT=./$SERVICE" >> $GITHUB_ENV
+          else
+            echo "Tag format not recognized"
+            exit 1
+          fi
 
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
@@ -42,7 +56,7 @@ jobs:
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ./frontend
+          context: ${{ env.CONTEXT }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

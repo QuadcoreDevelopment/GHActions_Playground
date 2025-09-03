@@ -34,7 +34,7 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=semver,pattern=v{{version}},match=frontend_v(\d.\d.\d)$
+          tags: type=semver,pattern=frontend_v{{version}},match=v(\d.\d.\d)$
           
       
       - name: Build and push Docker image

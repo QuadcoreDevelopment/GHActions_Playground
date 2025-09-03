@@ -31,10 +31,11 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5.8.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: type=semver,pattern=frontend_v{{version}},match=v(\d.\d.\d)$
+          # Extract the semver from the tag that triggered this workflow
+          tags: type=semver,prefix=v,pattern=a{{version}},value={{tag}}match=v(\d.\d.\d)$
           
       
       - name: Build and push Docker image

@@ -35,7 +35,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           # Extract the semver from the tag that triggered this workflow
-          tags: type=semver,prefix=v,pattern=a{{version}},value={{tag}},match=v(\d.\d.\d)$
+          tags: type=semver,prefix=v,pattern={{version}},value={{tag}},match=v(\d.\d.\d)$
           
       
       - name: Build and push Docker image

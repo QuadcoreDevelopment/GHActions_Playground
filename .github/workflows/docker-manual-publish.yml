@@ -65,6 +65,14 @@ jobs:
             type=raw,value=${{ inputs.tag }},enable=${{ !inputs.semver }}
             type=semver,prefix=v,pattern={{version}},value=${{ inputs.tag }},enable=${{ inputs.semver }}
 
+      - name: Verify extraction
+        id: verifyTag
+        run: |
+          TAG="${{ steps.meta.outputs.tags }}"
+          if [[ "$TAG" == "" ]]; then
+            echo "No tags found"
+            exit 1
+          fi
       
       - name: Build and push Docker image
         id: push

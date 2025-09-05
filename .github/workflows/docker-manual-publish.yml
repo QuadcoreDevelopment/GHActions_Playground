@@ -60,9 +60,8 @@ jobs:
         uses: docker/metadata-action@v5.8.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: latest=${{ inputs.latest }}
           tags: |
-            # set latest tag based on input
-            type=raw,value=latest,enable=${{ inputs.latest }}
             type=raw,value=${{ inputs.tag }},enable=${{ !inputs.semver }}
             type=semver,prefix=v,pattern={{version}},value=${{ inputs.tag }},enable=${{ inputs.semver }}
 
